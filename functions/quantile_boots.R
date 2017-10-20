@@ -22,7 +22,7 @@ quantile_boots <- function(t1, c1, q = .5, R = 1000, seed = 1991, plots = FALSE)
       warning("Median survival time could not be estimated for sample. Largest observed survival time was used as median.")
       Finv <- max(t1)
     }
-    return(F.inv)
+    return(Finv)
   }
   
   bootstrap.est <- numeric(R)
