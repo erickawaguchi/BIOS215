@@ -8,15 +8,12 @@ arcsin.ci <- function(fit, alpha = 0.05, t = NULL) {
   #- Get limits element wise
   lims <- data.frame(time = fit$time, surv = surv.est,  sigma = fit$std.err)
   
-  for(i in 1:length(surv.est)) {
-  lims$LL[i] <- sin(max(0, asin(sqrt(surv.est[i])) - 0.5 * qnorm(1 - alpha / 2) * sigma[i] * 
-                  sqrt(surv.est[i] / (1 - surv.est[i]))))^2
+  lims$LL <- sin(sapply(asin(sqrt(surv.est)), function(x) max(0, x)) - 0.5 * qnorm(1 - alpha / 2) * sigma * 
+            sqrt(surv.est/ (1 - surv.est)))^2
   
-  lims$UL[i] <- sin(min(pi / 2, asin(sqrt(surv.est[i])) +  0.5 * qnorm(1 - alpha / 2) * sigma[i] * 
-                  sqrt(surv.est[i] / (1 - surv.est[i]))))^2
-  }
-  
-  lims <- round(lims, 4)
+  lims$UL <- sin(sapply(asin(sqrt(surv.est)), function(x) min(pi / 2, x)) +  0.5 * qnorm(1 - alpha / 2) * sigma[i] * 
+          sqrt(surv.est[i] / (1 - surv.est[i])))^2
   
   return(lims)
 }
+arcsin.ci(surv.object)
