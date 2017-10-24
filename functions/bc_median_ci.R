@@ -23,7 +23,7 @@ bc.median.ci <- function(fit, type = "linear", alpha = 0.05, table = FALSE) {
     zScore <- 2 * (asin(sqrt(surv.est)) - asin(sqrt(1 - 0.5))) * sqrt(surv.est * (1 - surv.est)) /
       se.surv
   }
-  res <- data.frame(time = fit$time, z = zScore)
+  res <- data.frame(time = fit$time, surv = fit$surv, z = zScore)
  
   #- Finding limits
   LL <- ifelse(max(zScore) < qnorm(1 - alpha / 2),
@@ -38,8 +38,9 @@ bc.median.ci <- function(fit, type = "linear", alpha = 0.05, table = FALSE) {
   results$upper  <- ifelse(is.na(UL), NA, round(UL, 3))
   results$type   <- type
   results$alpha  <- alpha
-  if(table == TRUE) results$table  <- res
+  if(table == TRUE) results$table  <- round(res[fit$n.censor == 0, ], 3)
   
   return(results)
 }
 
+bc.median.ci(fit, table = TRUE)

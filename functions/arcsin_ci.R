@@ -11,9 +11,8 @@ arcsin.ci <- function(fit, alpha = 0.05, t = NULL) {
   lims$LL <- sin(sapply(asin(sqrt(surv.est)), function(x) max(0, x)) - 0.5 * qnorm(1 - alpha / 2) * sigma * 
             sqrt(surv.est/ (1 - surv.est)))^2
   
-  lims$UL <- sin(sapply(asin(sqrt(surv.est)), function(x) min(pi / 2, x)) +  0.5 * qnorm(1 - alpha / 2) * sigma[i] * 
-          sqrt(surv.est[i] / (1 - surv.est[i])))^2
+  lims$UL <- sin(sapply(asin(sqrt(surv.est)), function(x) min(pi / 2, x)) +  0.5 * qnorm(1 - alpha / 2) * sigma * 
+          sqrt(surv.est / (1 - surv.est)))^2
   
-  return(lims)
+  return(round(lims[which(fit$n.censor == 0), ], 3))
 }
-arcsin.ci(surv.object)
