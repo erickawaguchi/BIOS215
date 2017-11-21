@@ -1,14 +1,14 @@
-bc.median.ci <- function(fit, type = "linear", alpha = 0.05, table = FALSE) {
+bc.median.ci <- function(surv.object, type = "linear", alpha = 0.05, table = FALSE) {
 
-  if((min(fit$surv) < 0.5) == FALSE) {
+  if((min(surv.object$surv) < 0.5) == FALSE) {
     stop("Estimate for median survival time does not exist. Can not compute
          confidence interval.")
   }
   
-  median.est <- min(fit$time[fit$surv == max(fit$surv[fit$surv - 0.5 <= 0])])
+  median.est <- min(surv.object$time[surv.object$surv == max(surv.object$surv[surv.object$surv - 0.5 <= 0])])
   
-  surv.est <- fit$surv
-  se.surv  <- fit$std.err * surv.est
+  surv.est <- surv.object$surv
+  se.surv  <- surv.object$std.err * surv.est
   
   if (type != "linear" & type != "log" & type != "asin"){
      stop("type must be one of the three options: linear, log, asin")
@@ -23,14 +23,14 @@ bc.median.ci <- function(fit, type = "linear", alpha = 0.05, table = FALSE) {
     zScore <- 2 * (asin(sqrt(surv.est)) - asin(sqrt(1 - 0.5))) * sqrt(surv.est * (1 - surv.est)) /
       se.surv
   }
-  res <- data.frame(time = fit$time, surv = fit$surv, z = zScore)
+  res <- data.frame(time = surv.object$time, surv = surv.object$surv, z = zScore)
  
   #- Finding limits
   LL <- ifelse(max(zScore) < qnorm(1 - alpha / 2),
-         NA, max(min(fit$time[zScore <  qnorm(1 - alpha / 2)])))
+         NA, max(min(surv.object$time[zScore <  qnorm(1 - alpha / 2)])))
   
   UL <- ifelse(min(zScore) > -qnorm(1 - alpha / 2),
-               NA, min(max(fit$time[zScore > -qnorm(1 - alpha / 2)])))
+               NA, min(max(surv.object$time[zScore > -qnorm(1 - alpha / 2)])))
   
   results <- list()
   results$median <- round(median.est, 3)
@@ -38,9 +38,8 @@ bc.median.ci <- function(fit, type = "linear", alpha = 0.05, table = FALSE) {
   results$upper  <- ifelse(is.na(UL), NA, round(UL, 3))
   results$type   <- type
   results$alpha  <- alpha
-  if(table == TRUE) results$table  <- round(res[fit$n.censor == 0, ], 3)
+  if(table == TRUE) results$table  <- round(res[surv.object$n.censor == 0, ], 3)
   
   return(results)
 }
 
-bc.median.ci(fit, table = TRUE)
